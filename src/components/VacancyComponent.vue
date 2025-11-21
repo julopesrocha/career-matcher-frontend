@@ -1,7 +1,7 @@
 <template>
-  <v-row>
+  <v-row class="ma-4" dense>
     <v-col md>
-      <v-card class="" max-width="320" radius="50">
+      <v-card class="" max-width="320" rounded="lg">
         <v-card-title> Desenvolvedor FrontEnd </v-card-title>
         <v-card-text class="d-flex justify-space-between">
           <v-chip
