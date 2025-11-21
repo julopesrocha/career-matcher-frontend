@@ -1,13 +1,25 @@
+// src/main.js
 import { createApp } from 'vue'
-import { createPinia } from 'pinia'
-import './plugins/chart.ts'
-
 import App from './App.vue'
-import router from './router'
 
-const app = createApp(App)
+// Vuetify
+import 'vuetify/styles'
+import { createVuetify } from 'vuetify'
+import * as components from 'vuetify/components'
+import * as directives from 'vuetify/directives'
 
-app.use(createPinia())
-app.use(router)
+// Icones (Material Design)
+import { aliases, mdi } from 'vuetify/iconsets/mdi'
+import '@mdi/font/css/materialdesignicons.css'
 
-app.mount('#app')
+const vuetify = createVuetify({
+  components,
+  directives,
+  icons: {
+    defaultSet: 'mdi',
+    aliases,
+    sets: { mdi },
+  },
+})
+
+createApp(App).use(vuetify).mount('#app')
