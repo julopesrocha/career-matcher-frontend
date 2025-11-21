@@ -10,20 +10,17 @@
             variant="tonal"
             color="green darken-6"
           >
-            Senior
+            {{ vacancy.level }}
           </v-chip>
           <v-chip size="small" prepend-icon="mdi-laptop" color="green darken-6">
-            Presencial
+            {{ vacancy.workType }}
           </v-chip>
           <v-chip size="small" prepend-icon="mdi-map-marker" color="green darken-6">
-            Rio de Janeiro
+            {{ vacancy.location }}
           </v-chip>
         </v-card-text>
         <v-card-subtitle> Descrição </v-card-subtitle>
-        <v-card-text>
-          Experiência com TypeScript Conhecimento em testes de frontend e boas práticas de
-          performance</v-card-text
-        >
+        <v-card-text> {{ vacancy.description }}</v-card-text>
         <v-divider class="mx-4" />
         <v-row align="center" justify="space-between">
           <v-col>
@@ -31,7 +28,7 @@
           </v-col>
           <v-col>
             <v-chip class="ma-2" color="indigo" prepend-icon="mdi-account-circle">
-              Mike Almeida
+              {{ vacancy.candidate }}
             </v-chip>
           </v-col>
         </v-row>
@@ -39,3 +36,17 @@
     </v-col>
   </v-row>
 </template>
+
+<script setup lang="ts">
+import { reactive } from 'vue'
+
+const vacancy = reactive({
+  title: 'Desenvolvedor FrontEnd',
+  level: 'Senior',
+  workType: 'Presencial',
+  location: 'Rio de Janeiro',
+  description:
+    'Experiência com TypeScript Conhecimento em testes de frontend e boas práticas de performance',
+  candidate: 'Mike Almeida',
+})
+</script>

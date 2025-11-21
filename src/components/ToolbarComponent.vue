@@ -1,24 +1,21 @@
-<script setup lang="ts">
-import SearchComponent from './SearchComponent.vue'
-import VacancyComponent from './VacancyComponent.vue'
-</script>
-
 <template>
-  <!-- Hero section -->
   <div class="hero-section">
     <h1 class="app-title">Career Matcher</h1>
-    <!-- <h3>Encontre o candidato perfeito</h3> -->
 
     <div class="search-wrapper">
       <SearchComponent />
     </div>
   </div>
 
-  <!-- Conteúdo -->
   <v-container class="mt-10">
     <VacancyComponent />
   </v-container>
 </template>
+
+<script setup lang="ts">
+import SearchComponent from './SearchComponent.vue'
+import VacancyComponent from './VacancyComponent.vue'
+</script>
 
 <style scoped>
 .hero-section {
