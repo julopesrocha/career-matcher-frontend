@@ -7,7 +7,7 @@
     </div>
   </div>
 
-  <v-row>
+  <v-row dense class="ma-3 pa-4">
     <v-col cols="12" md="3" v-for="v in vacancies" :key="v.title">
       <VacancyComponent :vacancy="v" />
     </v-col>

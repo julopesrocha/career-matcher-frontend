@@ -1,42 +1,43 @@
 <template>
-  <v-row class="ma-4" dense>
-    <v-col class="ma-3 pa-0">
-      <v-card class="ma-1 pa-0" max-width="320" rounded="lg">
-        <v-card-title> Desenvolvedor FrontEnd </v-card-title>
-        <v-card-text class="d-flex justify-space-between">
-          <v-chip
-            size="small"
-            prepend-icon="mdi-briefcase-variant"
-            variant="tonal"
-            color="green darken-6"
-          >
-            {{ props.vacancy.level }}
-          </v-chip>
-          <v-chip size="small" prepend-icon="mdi-laptop" color="green darken-6">
-            {{ props.vacancy.workType }}
-          </v-chip>
-          <v-chip size="small" prepend-icon="mdi-map-marker" color="green darken-6">
-            {{ props.vacancy.location }}
-          </v-chip>
-        </v-card-text>
-        <v-card-subtitle> Descrição </v-card-subtitle>
-        <v-card-text class="custom-description-height mb-2">
-          {{ props.vacancy.description }}</v-card-text
-        >
-        <v-divider class="mx-4" />
-        <v-row align="center" justify="space-between">
-          <v-col>
-            <v-card-subtitle>Candidato</v-card-subtitle>
-          </v-col>
-          <v-col>
-            <v-chip class="ma-2" color="indigo" prepend-icon="mdi-account-circle">
-              {{ props.vacancy.candidate }}
-            </v-chip>
-          </v-col>
-        </v-row>
-      </v-card>
-    </v-col>
-  </v-row>
+  <!-- <v-row class="ma-4" dense> -->
+  <!-- <v-col class=""> -->
+  <v-card class="ma-1 px-2 pt-2" rounded="lg" max-width="340" elevation="2">
+    <v-card-title> {{ props.vacancy.title }} </v-card-title>
+    <v-card-text class="d-flex">
+      <v-chip
+        size="small"
+        prepend-icon="mdi-briefcase-variant"
+        variant="tonal"
+        color="green darken-6"
+        class="mr-1"
+      >
+        {{ props.vacancy.level }}
+      </v-chip>
+      <v-chip size="small" prepend-icon="mdi-laptop" color="green darken-6" class="mr-1">
+        {{ props.vacancy.workType }}
+      </v-chip>
+      <v-chip size="small" prepend-icon="mdi-map-marker" color="green darken-6" class="mr-1">
+        {{ props.vacancy.location }}
+      </v-chip>
+    </v-card-text>
+    <v-card-subtitle> Descrição </v-card-subtitle>
+    <v-card-text class="custom-description-height mb-2">
+      {{ props.vacancy.description }}</v-card-text
+    >
+    <v-divider class="mx-4" />
+    <v-row align="center" justify="space-between" class="py-1">
+      <v-col>
+        <v-card-subtitle>Candidato</v-card-subtitle>
+      </v-col>
+      <v-col align-self="end">
+        <v-chip class="ma-2" color="indigo" prepend-icon="mdi-account-circle">
+          {{ props.vacancy.candidate }}
+        </v-chip>
+      </v-col>
+    </v-row>
+  </v-card>
+  <!-- </v-col> -->
+  <!-- </v-row> -->
 </template>
 
 <script setup lang="ts">
