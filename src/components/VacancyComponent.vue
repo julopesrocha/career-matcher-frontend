@@ -1,6 +1,4 @@
 <template>
-  <!-- <v-row class="ma-4" dense> -->
-  <!-- <v-col class=""> -->
   <v-card class="ma-1 px-2 pt-2" rounded="lg" max-width="340" elevation="2">
     <v-card-title> {{ props.vacancy.title }} </v-card-title>
     <v-card-text class="d-flex">
@@ -36,8 +34,6 @@
       </v-col>
     </v-row>
   </v-card>
-  <!-- </v-col> -->
-  <!-- </v-row> -->
 </template>
 
 <script setup lang="ts">
