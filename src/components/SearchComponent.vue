@@ -15,6 +15,8 @@
   </v-row>
 </template>
 
+<script setup lang="ts"></script>
+
 <style scoped>
 .search-box {
   border-radius: 40px !important;

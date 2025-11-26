@@ -3,7 +3,7 @@
     <h1 class="app-title">Career Matcher</h1>
 
     <div class="search-wrapper">
-      <SearchComponent />
+      <!-- <SearchComponent /> -->
     </div>
   </div>
 
@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import SearchComponent from './SearchComponent.vue'
+// import SearchComponent from './SearchComponent.vue'
 import VacancyComponent from './VacancyComponent.vue'
 
 const vacancies = ref([

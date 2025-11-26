@@ -1,7 +1,7 @@
 <template>
   <v-row class="ma-4" dense>
-    <v-col class="ma-0 pa-0">
-      <v-card class="ma-1 pa-0" max-width="310" rounded="lg">
+    <v-col class="ma-3 pa-0">
+      <v-card class="ma-1 pa-0" max-width="320" rounded="lg">
         <v-card-title> Desenvolvedor FrontEnd </v-card-title>
         <v-card-text class="d-flex justify-space-between">
           <v-chip
@@ -20,7 +20,9 @@
           </v-chip>
         </v-card-text>
         <v-card-subtitle> Descrição </v-card-subtitle>
-        <v-card-text> {{ props.vacancy.description }}</v-card-text>
+        <v-card-text class="custom-description-height mb-2">
+          {{ props.vacancy.description }}</v-card-text
+        >
         <v-divider class="mx-4" />
         <v-row align="center" justify="space-between">
           <v-col>
@@ -49,3 +51,10 @@ const props = defineProps<{
   }
 }>()
 </script>
+<style scoped>
+.custom-description-height {
+  height: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+</style>
