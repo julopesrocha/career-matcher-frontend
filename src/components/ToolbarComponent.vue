@@ -3,14 +3,14 @@
     <h1 class="app-title">Career Matcher</h1>
 
     <div class="search-wrapper">
-      <UserComponent></UserComponent>
+      <!-- <UserComponent></UserComponent> -->
       <!-- <SearchComponent /> -->
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import UserComponent from './UserComponent.vue'
+// import UserComponent from './UserComponent.vue'
 
 // import SearchComponent from './SearchComponent.vue'
 </script>
