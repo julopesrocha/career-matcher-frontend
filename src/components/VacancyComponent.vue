@@ -28,26 +28,14 @@
         <v-card-subtitle>Candidato</v-card-subtitle>
       </v-col>
       <v-col align-self="end">
-        <!-- <UserComponent :candidate="props.vacancy.candidate" /> -->
-        <v-chip color="indigo" v-bind="props" pill class="ma-2">
-          <v-avatar start>
-            <v-img
-              v-if="props.vacancy.candidate.avatar"
-              :src="props.vacancy.candidate.avatar"
-              cover
-              style="width: 100%; height: 100%"
-            />
-            <span v-else> <v-icon prepend>mdi-account-circle</v-icon> </span>
-          </v-avatar>
-          {{ props.vacancy.candidate.name }}
-        </v-chip>
+        <UserComponent :candidate="props.vacancy.candidate" />
       </v-col>
     </v-row>
   </v-card>
 </template>
 
 <script setup lang="ts">
-// import UserComponent from './UserComponent.vue'
+import UserComponent from './UserComponent.vue'
 
 const props = defineProps<{
   vacancy: {

@@ -59,7 +59,7 @@ const vacancies = ref([
     },
   },
 ])
-console.log(vacancies.value)
+
 const setPagination = () => {
   return Math.ceil(vacancies.value.length / 8)
 }

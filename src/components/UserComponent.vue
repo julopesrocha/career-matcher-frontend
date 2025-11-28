@@ -35,12 +35,12 @@
             </v-col>
 
             <v-col>
-              <v-list-item-content>
+              <v-list-item>
                 <v-list-item-title>{{ userProps.candidate.name }}</v-list-item-title>
                 <v-list-item-subtitle>
                   {{ userProps.candidate.role }}
                 </v-list-item-subtitle>
-              </v-list-item-content>
+              </v-list-item>
             </v-col>
           </v-row>
         </v-list>
