@@ -3,13 +3,13 @@
     <h1 class="app-title">Career Matcher</h1>
 
     <div class="search-wrapper">
-      <!-- <SearchComponent /> -->
+      <SearchComponent />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-// import SearchComponent from './SearchComponent.vue'
+import SearchComponent from './SearchComponent.vue'
 </script>
 
 <style scoped>
