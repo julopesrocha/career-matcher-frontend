@@ -22,14 +22,5 @@
 import { shallowRef } from 'vue'
 
 const value = shallowRef([])
-const items = [
-  'Frontend',
-  'Backend',
-  'Senior',
-  'Pleno',
-  'Junior',
-  'Remoto',
-  'Presencial',
-  'Híbrido',
-]
+const items = ['Frontend', 'Backend', 'Senior', 'Pleno', 'Junior', 'Remoto', 'Presencial', 'Híbrdo']
 </script>
