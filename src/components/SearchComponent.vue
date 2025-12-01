@@ -21,16 +21,7 @@
 <script setup lang="ts">
 import { shallowRef } from 'vue'
 
-const value = shallowRef([
-  'Frontend',
-  'Backend',
-  'Senior',
-  'Pleno',
-  'Junior',
-  'Remoto',
-  'Presencial',
-  'Híbrido',
-])
+const value = shallowRef([])
 const items = [
   'Frontend',
   'Backend',
