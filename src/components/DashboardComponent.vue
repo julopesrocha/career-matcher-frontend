@@ -22,15 +22,6 @@ const paginatedVacancies = computed(() => {
   return vacancies.value.slice(start, end)
 })
 
-const avatarFromName = (name: string) => {
-  let hash = 0
-  for (let i = 0; i < name.length; i++) {
-    hash = name.charCodeAt(i) + ((hash << 5) - hash)
-  }
-  const index = Math.abs(hash % 99)
-  return `https://randomuser.me/api/portraits/men/${index}.jpg`
-}
-
 const vacancies = ref([
   {
     title: 'Desenvolvedor FrontEnd',
@@ -38,12 +29,7 @@ const vacancies = ref([
     workType: 'Presencial',
     location: 'Rio de Janeiro',
     description: 'Experiência com TypeScript e testes de frontend...',
-    candidate: {
-      name: 'Mike Almeida',
-      role: 'Desenvolvedor Frontend',
-      avatar: avatarFromName('Mike Almeida'),
-      techs: ['Vue.js', 'TypeScript', 'Jest', 'HTML', 'CSS'],
-    },
+    candidate: 'Mike Almeida',
   },
   {
     title: 'Backend Node.js',
@@ -51,12 +37,7 @@ const vacancies = ref([
     workType: 'Remoto',
     location: 'São Paulo',
     description: 'Node, Express, MongoDB...',
-    candidate: {
-      name: 'Ana Costa',
-      role: 'Desenvolvedor Backend',
-      avatar: avatarFromName('Ana Costa'),
-      techs: ['Node.js', 'MongoDB', 'Express', 'Docker'],
-    },
+    candidate: 'Julia Rocha',
   },
 ])
 

@@ -28,7 +28,7 @@
         <v-card-subtitle>Candidato</v-card-subtitle>
       </v-col>
       <v-col align-self="end">
-        <UserComponent :candidate="props.vacancy.candidate" />
+        <UserComponent :candidate-name="props.vacancy.candidate" />
       </v-col>
     </v-row>
   </v-card>
@@ -44,14 +44,18 @@ const props = defineProps<{
     workType: string
     location: string
     description: string
-    candidate: {
-      name: string
-      role: string
-      avatar: string
-      techs: string[]
-    }
+    candidate: string
   }
 }>()
+
+// const avatarFromName = (name: string) => {
+//   let hash = 0
+//   for (let i = 0; i < name.length; i++) {
+//     hash = name.charCodeAt(i) + ((hash << 5) - hash)
+//   }
+//   const index = Math.abs(hash % 99)
+//   return `https://randomuser.me/api/portraits/men/${index}.jpg`
+// }
 </script>
 <style scoped>
 .custom-description-height {
