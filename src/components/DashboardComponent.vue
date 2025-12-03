@@ -74,13 +74,11 @@ const loadVacancies = async () => {
   error.value = null
 
   try {
-    // Buscar vagas e candidatos em paralelo
     const [vagas, candidatos] = await Promise.all([
       apiService.getVagas(),
       apiService.getCandidatos(),
     ])
 
-    // Para cada vaga, encontrar o melhor candidato
     const vacanciesWithCandidates: VacancyCard[] = vagas.map((vacancy: Vaga) => {
       if (candidatos.length === 0) {
         return vacancyToCard(vacancy)
