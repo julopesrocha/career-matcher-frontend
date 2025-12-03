@@ -20,10 +20,20 @@ class ApiService {
     return response.data
   }
 
+  async getCandidatoById(id: number): Promise<Candidato> {
+    const response = await this.client.get<Candidato>(`candidatos/${id}`)
+    return response.data
+  }
+
   // ==================== VAGAS ====================
 
   async getVagas(): Promise<Vaga[]> {
     const response = await this.client.get<Vaga[]>('vagas/')
+    return response.data
+  }
+
+  async getVagaById(id: number): Promise<Vaga> {
+    const response = await this.client.get<Vaga>(`vagas/${id}`)
     return response.data
   }
 }
