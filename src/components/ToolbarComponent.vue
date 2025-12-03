@@ -7,13 +7,21 @@
     </div>
 
     <div class="search-wrapper">
-      <SearchComponent />
+      <SearchComponent @filter-change="handleFilterChange" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import SearchComponent from './SearchComponent.vue'
+
+const emit = defineEmits<{
+  (e: 'filter-change', filters: string[]): void
+}>()
+
+const handleFilterChange = (filters: string[]) => {
+  emit('filter-change', filters)
+}
 </script>
 
 <style scoped>
@@ -66,10 +74,11 @@ import SearchComponent from './SearchComponent.vue'
 }
 
 .search-wrapper {
-  max-width: 600px;
+  max-width: 900px;
   margin: 0 auto;
   position: relative;
   z-index: 1;
+  padding: 0 16px;
 }
 
 @media (max-width: 600px) {
