@@ -55,13 +55,27 @@ export interface Experiencia {
   senioridade: Senioridade
 }
 
-// Competência
+// Competência base
 export interface Competencia {
   id: number
   nome: string
 }
 
-// Candidato (conforme API.md)
+// Relação HabilEm (Candidato -> Competência)
+export interface HabilEm {
+  id: number
+  peso: number
+  competencia: Competencia
+}
+
+// Relação RequisitaCompetenciaEm (Vaga -> Competência)
+export interface RequisitaCompetenciaEm {
+  id: number
+  peso: number
+  competencia: Competencia
+}
+
+// Candidato (conforme API-DOCUMENTATION.md)
 export interface Candidato {
   id: number
   nome: string
@@ -71,15 +85,17 @@ export interface Candidato {
   telefone: string
   email: string
   senioridade: Senioridade
-  competencias: Competencia[]
+  idVagaEscolhida?: number
+  competencias: HabilEm[]
   experiencias: Experiencia[]
   graduacao: Graduacao | null
   mestrado: Mestrado | null
   doutorado: Doutorado | null
   posDoutorado: PosDoutorado | null
+  listaPreferenciaVagas: number[]
 }
 
-// Vaga (conforme API.md)
+// Vaga (conforme API-DOCUMENTATION.md)
 export interface Vaga {
   id: number
   empresa: string
@@ -87,10 +103,12 @@ export interface Vaga {
   cidade: string
   senioridade: Senioridade
   modalidade: Modalidade
+  idCandidatoEscolhido?: number
   graduacao: Graduacao[] | null
   experiencia: Experiencia | null
-  competencias: Competencia[]
+  competencias: RequisitaCompetenciaEm[]
   mestrado: Mestrado | null
   doutorado: Doutorado | null
   posDoutorado: PosDoutorado | null
+  listaPreferenciaCandidatos: number[]
 }

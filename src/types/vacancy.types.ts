@@ -39,34 +39,8 @@ export function vacancyToCard(vacancy: Vaga, candidate?: Candidato): VacancyCard
     cidade: vacancy.cidade,
     senioridade: seniorityDisplayMap[vacancy.senioridade] || vacancy.senioridade,
     modalidade: modalityDisplayMap[vacancy.modalidade] || vacancy.modalidade,
-    competencias: vacancy.competencias.map((c) => c.nome),
+    competencias: vacancy.competencias.map((c) => c.competencia.nome),
     candidato: candidate?.nome,
     candidatoId: candidate?.id,
   }
-}
-
-export function calculateCompatibility(vacancy: Vaga, candidate: Candidato): number {
-  let points = 0
-  let total = 0
-
-  total += 3
-  if (vacancy.senioridade === candidate.senioridade) {
-    points += 3
-  }
-
-  total += 2
-  if (vacancy.cidade.toLowerCase() === candidate.cidade.toLowerCase()) {
-    points += 2
-  }
-
-  total += 5
-  const vacancySkills = vacancy.competencias.map((c) => c.nome.toLowerCase())
-  const candidateSkills = candidate.competencias.map((c) => c.nome.toLowerCase())
-  const skillsMatch = vacancySkills.filter((s) => candidateSkills.includes(s)).length
-
-  if (vacancySkills.length > 0) {
-    points += (skillsMatch / vacancySkills.length) * 5
-  }
-
-  return total > 0 ? Math.round((points / total) * 100) : 0
 }
