@@ -7,13 +7,13 @@
     </div>
 
     <div class="search-wrapper">
-      <!-- <SearchComponent /> -->
+      <SearchComponent />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-// import SearchComponent from './SearchComponent.vue'
+import SearchComponent from './SearchComponent.vue'
 </script>
 
 <style scoped>

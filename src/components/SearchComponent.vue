@@ -1,25 +1,26 @@
 <template>
-  <v-row dense justify="center">
-    <v-col cols="12">
-      <v-text-field
-        ref="searchField"
-        label="Search"
-        variant="solo"
-        hide-details
-        rounded="pill"
-        bg-color="white"
-        class="search-box"
-        clearable
-      ></v-text-field>
-    </v-col>
-  </v-row>
+  <v-select
+    v-model="value"
+    :items="items"
+    label="Selecione"
+    multiple
+    clearable
+    rounded="pill"
+    hide-details
+    variant="solo"
+  >
+    <template v-slot:selection="{ item, index }">
+      <v-chip v-if="index < 3" :text="item.title"></v-chip>
+
+      <span v-if="index === 3" class="text-grey text-caption align-self-center">
+        (+{{ value.length - 3 }} others)
+      </span>
+    </template>
+  </v-select>
 </template>
+<script setup lang="ts">
+import { shallowRef } from 'vue'
 
-<script setup lang="ts"></script>
-
-<style scoped>
-.search-box {
-  border-radius: 40px !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* leve sombra estilo Google */
-}
-</style>
+const value = shallowRef([])
+const items = ['Frontend', 'Backend', 'Senior', 'Pleno', 'Junior', 'Remoto', 'Presencial', 'Híbrdo']
+</script>
