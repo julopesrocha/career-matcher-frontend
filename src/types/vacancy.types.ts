@@ -13,6 +13,14 @@ export interface VacancyCard {
   candidatoId?: number
 }
 
+export interface VacancyFilters {
+  cargo?: string[]
+  senioridade?: string[]
+  modalidade?: string[]
+  competencias?: string[]
+  cidade?: string
+}
+
 const seniorityDisplayMap: Record<Senioridade, string> = {
   [Senioridade.ESTAGIARIO]: 'Estagiário',
   [Senioridade.TRAINEE]: 'Trainee',
