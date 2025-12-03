@@ -135,11 +135,11 @@
                   <v-icon color="white">mdi-account</v-icon>
                 </v-avatar>
                 <div>
-                  <p class="font-weight-bold text-h6 mb-1">{{ matchedCandidate.nome }}</p>
-                  <p class="text-body-2 text-grey-darken-1">
+                  <p class="candidate-name-display mb-1">{{ matchedCandidate.nome }}</p>
+                  <p class="candidate-info-display">
                     {{ matchedCandidate.cargo }} - {{ matchedCandidate.cidade }}
                   </p>
-                  <p class="text-body-2 text-grey-darken-1">
+                  <p class="candidate-info-display">
                     {{ matchedCandidate.email }}
                   </p>
                 </div>
@@ -300,5 +300,20 @@ const loadVacancyDetails = async () => {
 .chips-container {
   display: flex;
   flex-wrap: wrap;
+}
+
+.candidate-name-display {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.candidate-info-display {
+  font-size: 0.9rem;
+  color: #424242;
+  margin: 2px 0 0 0;
+  line-height: 1.5;
 }
 </style>
