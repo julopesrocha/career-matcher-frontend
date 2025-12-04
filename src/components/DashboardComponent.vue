@@ -169,7 +169,24 @@ const loadVacancies = async (filterData: FilterData = { senioridade: [], modalid
     const hasFilters = Object.keys(apiFilters).length > 0
     const vagas = await (hasFilters ? apiService.getVagasWithFilters(apiFilters) : apiService.getVagas())
 
-    vacancies.value = vagas.map((vacancy: Vaga) => vacancyToCard(vacancy))
+    // Buscar candidatos para cada vaga que tem um candidato escolhido
+    const candidatePromises = vagas.map(async (vaga: Vaga) => {
+      if (vaga.idCandidatoEscolhido) {
+        try {
+          return await apiService.getCandidatoById(vaga.idCandidatoEscolhido)
+        } catch (err) {
+          console.error(`Erro ao buscar candidato ${vaga.idCandidatoEscolhido}:`, err)
+          return null
+        }
+      }
+      return null
+    })
+
+    const candidates = await Promise.all(candidatePromises)
+
+    vacancies.value = vagas.map((vacancy: Vaga, index: number) => 
+      vacancyToCard(vacancy, candidates[index] || undefined)
+    )
   } catch (err) {
     console.error('Erro ao carregar vagas:', err)
     error.value =
