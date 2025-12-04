@@ -3,21 +3,6 @@
     <ToolbarComponent @filter-change="handleFilterChange" />
 
     <div class="dashboard-content">
-      <!-- Active Filters Display -->
-      <div v-if="activeFilters.length > 0" class="active-filters-banner mb-4">
-        <v-icon size="small" class="mr-2">mdi-filter-check</v-icon>
-        <span class="filter-text">Filtrando por: {{ activeFilters.length }} critério(s)</span>
-        <v-btn
-          size="x-small"
-          variant="text"
-          color="deep-purple"
-          @click="clearFilters"
-          class="ml-2"
-        >
-          Remover filtros
-        </v-btn>
-      </div>
-
       <!-- Loading State -->
       <v-row v-if="loading" dense class="loading-state" justify="center">
         <v-col cols="12" class="text-center">
@@ -51,16 +36,16 @@
       <v-row v-else-if="vacancies.length === 0" dense class="empty-state" justify="center">
         <v-col cols="12" class="text-center">
           <v-icon size="80" color="grey-lighten-1">
-            {{ activeFilters.length > 0 ? 'mdi-filter-off' : 'mdi-briefcase-off' }}
+            {{ hasActiveFilters ? 'mdi-filter-off' : 'mdi-briefcase-off' }}
           </v-icon>
           <p class="mt-4 text-h5 text-grey-darken-1">
-            {{ activeFilters.length > 0 ? 'Nenhuma vaga corresponde aos filtros' : 'Nenhuma vaga encontrada' }}
+            {{ hasActiveFilters ? 'Nenhuma vaga corresponde aos filtros' : 'Nenhuma vaga encontrada' }}
           </p>
           <p class="text-body-2 text-grey">
-            {{ activeFilters.length > 0 ? 'Tente remover alguns filtros para ver mais resultados' : 'Tente ajustar seus filtros de busca' }}
+            {{ hasActiveFilters ? 'Tente remover alguns filtros para ver mais resultados' : 'Tente ajustar seus filtros de busca' }}
           </p>
           <v-btn
-            v-if="activeFilters.length > 0"
+            v-if="hasActiveFilters"
             color="deep-purple"
             variant="elevated"
             class="mt-4"
@@ -99,14 +84,22 @@ import ToolbarComponent from './ToolbarComponent.vue'
 import VacancyComponent from './VacancyComponent.vue'
 import { apiService } from '@/services/api'
 import { vacancyToCard, type VacancyCard } from '@/types/vacancy.types'
-import type { Vaga, Candidato } from '@/types/api.types'
+import type { Vaga } from '@/types/api.types'
+
+interface FilterData {
+  senioridade: string[]
+  modalidade: string[]
+  cargo?: string
+  empresa?: string
+  cidade?: string
+}
 
 const vacanciesPerpage = 8
 const currentPage = ref(1)
 const vacancies = ref<VacancyCard[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
-const activeFilters = ref<string[]>([])
+const activeFilters = ref<FilterData>({ senioridade: [], modalidade: [] })
 
 const paginatedVacancies = computed(() => {
   const start = (currentPage.value - 1) * vacanciesPerpage
@@ -118,46 +111,65 @@ const setPagination = () => {
   return Math.ceil(vacancies.value.length / vacanciesPerpage)
 }
 
-const handleFilterChange = (filters: string[]) => {
-  activeFilters.value = filters
-  currentPage.value = 1 // Reset para primeira página ao filtrar
-  loadVacancies(filters)
+const hasActiveFilters = computed(() => {
+  return (
+    activeFilters.value.senioridade.length > 0 ||
+    activeFilters.value.modalidade.length > 0 ||
+    !!activeFilters.value.cargo ||
+    !!activeFilters.value.empresa ||
+    !!activeFilters.value.cidade
+  )
+})
+
+const handleFilterChange = (filterData: FilterData) => {
+  activeFilters.value = filterData
+  currentPage.value = 1
+  loadVacancies(filterData)
 }
 
 const clearFilters = () => {
-  activeFilters.value = []
+  activeFilters.value = { senioridade: [], modalidade: [] }
   loadVacancies()
 }
 
-const loadVacancies = async (filters: string[] = []) => {
+const loadVacancies = async (filterData: FilterData = { senioridade: [], modalidade: [] }) => {
   loading.value = true
   error.value = null
 
   try {
-    // TODO: Quando o backend estiver pronto, passar os filtros aqui
-    // const [vagas, candidatos] = await Promise.all([
-    //   apiService.getVagas(filters),
-    //   apiService.getCandidatos(),
-    // ])
-    
-    const [vagas, candidatos] = await Promise.all([
-      apiService.getVagas(),
-      apiService.getCandidatos(),
-    ])
+    const apiFilters: {
+      senioridade?: string[]
+      modalidade?: string[]
+      cargo?: string[]
+      empresa?: string
+      cidade?: string
+    } = {}
 
-    const candidatosMap = new Map(candidatos.map((c: Candidato) => [c.id, c]))
+    if (filterData.senioridade.length > 0) {
+      apiFilters.senioridade = filterData.senioridade
+    }
 
-    const vacanciesWithCandidates: VacancyCard[] = vagas.map((vacancy: Vaga) => {
-      if (!vacancy.idCandidatoEscolhido) {
-        return vacancyToCard(vacancy)
-      }
+    if (filterData.modalidade.length > 0) {
+      apiFilters.modalidade = filterData.modalidade
+    }
 
-      const matchedCandidate = candidatosMap.get(vacancy.idCandidatoEscolhido)
+    // Cargo é enviado como array se existir
+    if (filterData.cargo) {
+      apiFilters.cargo = [filterData.cargo]
+    }
 
-      return matchedCandidate ? vacancyToCard(vacancy, matchedCandidate) : vacancyToCard(vacancy)
-    })
+    if (filterData.empresa) {
+      apiFilters.empresa = filterData.empresa
+    }
 
-    vacancies.value = vacanciesWithCandidates
+    if (filterData.cidade) {
+      apiFilters.cidade = filterData.cidade
+    }
+
+    const hasFilters = Object.keys(apiFilters).length > 0
+    const vagas = await (hasFilters ? apiService.getVagasWithFilters(apiFilters) : apiService.getVagas())
+
+    vacancies.value = vagas.map((vacancy: Vaga) => vacancyToCard(vacancy))
   } catch (err) {
     console.error('Erro ao carregar vagas:', err)
     error.value =
@@ -197,24 +209,6 @@ onMounted(() => {
 
 .vacancies-grid {
   margin: 0 -8px;
-}
-
-.active-filters-banner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px 24px;
-  background: linear-gradient(135deg, rgba(103, 58, 183, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-  border-radius: 12px;
-  border: 1px solid rgba(103, 58, 183, 0.2);
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.filter-text {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #5e35b1;
 }
 
 .pagination-wrapper {
