@@ -432,9 +432,13 @@ const clearFilters = () => {
 const applyFilters = () => {
   const senioridadeValues = ['estagiario', 'trainee', 'junior', 'pleno', 'senior', 'gestor', 'gerente', 'arquiteto', 'especialista']
   const modalidadeValues = ['remoto', 'presencial', 'hibrido']
-  
-  const senioridade = selectedFilters.value.filter(f => senioridadeValues.includes(f))
-  const modalidade = selectedFilters.value.filter(f => modalidadeValues.includes(f))
+
+  const senioridade = selectedFilters.value
+    .filter(f => senioridadeValues.includes(f))
+    .map(f => f.toUpperCase())
+  const modalidade = selectedFilters.value
+    .filter(f => modalidadeValues.includes(f))
+    .map(f => f.toUpperCase())
 
   const filterData: FilterData = {
     senioridade,

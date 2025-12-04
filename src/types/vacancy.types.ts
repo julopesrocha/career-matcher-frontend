@@ -1,5 +1,5 @@
 import { Senioridade, Modalidade } from './api.types'
-import type { Vaga, Candidato } from './api.types'
+import type { LambdaVaga, LambdaCompetencia, LambdaRelationship } from './lambda.types'
 
 export interface VacancyCard {
   id: number
@@ -11,6 +11,8 @@ export interface VacancyCard {
   competencias: string[]
   candidato?: string
   candidatoId?: number
+  // Dados completos da Lambda para o modal
+  fullData: LambdaVaga
 }
 
 export interface VacancyFilters {
@@ -19,6 +21,7 @@ export interface VacancyFilters {
   modalidade?: string[]
   competencias?: string[]
   cidade?: string
+  empresa?: string[]
 }
 
 const seniorityDisplayMap: Record<Senioridade, string> = {
@@ -39,16 +42,24 @@ const modalityDisplayMap: Record<Modalidade, string> = {
   [Modalidade.HIBRIDO]: 'Híbrido',
 }
 
-export function vacancyToCard(vacancy: Vaga, candidate?: Candidato): VacancyCard {
+export function lambdaVagaToCard(vaga: LambdaVaga): VacancyCard {
+  const { properties } = vaga
+
+  // Extrair competências dos relacionamentos da vaga
+  const competencias = properties.relationshipsVaga
+    .filter((rel: LambdaRelationship) => rel.type === 'REQUISITA_COMPETENCIA_EM')
+    .map((rel: LambdaRelationship) => (rel.target as LambdaCompetencia).nome)
+
   return {
-    id: vacancy.id,
-    empresa: vacancy.empresa,
-    cargo: vacancy.cargo,
-    cidade: vacancy.cidade,
-    senioridade: seniorityDisplayMap[vacancy.senioridade] || vacancy.senioridade,
-    modalidade: modalityDisplayMap[vacancy.modalidade] || vacancy.modalidade,
-    competencias: vacancy.competencias.map((c) => c.competencia.nome),
-    candidato: candidate?.nome,
-    candidatoId: candidate?.id,
+    id: properties.id,
+    empresa: properties.empresa,
+    cargo: properties.cargo,
+    cidade: properties.cidade,
+    senioridade: seniorityDisplayMap[properties.senioridade] || properties.senioridade,
+    modalidade: modalityDisplayMap[properties.modalidade] || properties.modalidade,
+    competencias,
+    candidato: properties.candidatoEscolhido?.nome,
+    candidatoId: properties.candidatoEscolhido?.id,
+    fullData: vaga,
   }
 }

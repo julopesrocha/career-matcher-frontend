@@ -46,7 +46,7 @@
 
           <v-divider class="my-3" />
 
-          <div class="tech-section">
+          <div v-if="data?.competencias && data.competencias.length > 0" class="tech-section">
             <div class="section-title">
               <v-icon size="18" class="mr-1">mdi-code-tags</v-icon>
               Tecnologias
@@ -64,6 +64,11 @@
               </v-chip>
             </div>
           </div>
+          <div v-else class="tech-section">
+            <p class="text-caption text-grey-darken-1">
+              Informações de competências não disponíveis
+            </p>
+          </div>
         </div>
       </v-card>
     </v-menu>
@@ -71,15 +76,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import { apiService } from '@/services/api'
-import type { Candidato } from '@/types/api.types'
+import { ref, computed } from 'vue'
+import type { LambdaCandidatoEscolhido, LambdaRelationship, LambdaCompetencia } from '@/types/lambda.types'
+import { Senioridade } from '@/types/api.types'
 
 const menu = ref(false)
 
 const props = defineProps<{
   candidateName?: string
   candidateId?: number
+  candidateData?: LambdaCandidatoEscolhido
 }>()
 
 interface Candidate {
@@ -90,42 +96,39 @@ interface Candidate {
   competencias: string[]
 }
 
-const data = ref<Candidate | null>(null)
-const loading = ref(false)
-const error = ref(false)
-
-const fetchCandidate = async () => {
-  if (!props.candidateId) {
-    error.value = true
-    return
-  }
-
-  loading.value = true
-  error.value = false
-
-  try {
-    const candidate: Candidato = await apiService.getCandidatoById(props.candidateId)
-
-    data.value = {
-      nome: candidate.nome,
-      senioridade: candidate.senioridade,
-      cidade: candidate.cidade,
-      avatar: null,
-      competencias: candidate.competencias.map((c) => c.competencia.nome),
-    }
-  } catch (e) {
-    console.error('Erro ao buscar candidato:', e)
-    error.value = true
-  } finally {
-    loading.value = false
-  }
+const seniorityDisplayMap: Record<Senioridade, string> = {
+  [Senioridade.ESTAGIARIO]: 'Estagiário',
+  [Senioridade.TRAINEE]: 'Trainee',
+  [Senioridade.JUNIOR]: 'Júnior',
+  [Senioridade.PLENO]: 'Pleno',
+  [Senioridade.SENIOR]: 'Sênior',
+  [Senioridade.GESTOR]: 'Gestor',
+  [Senioridade.GERENTE]: 'Gerente',
+  [Senioridade.ARQUITETO]: 'Arquiteto',
+  [Senioridade.ESPECIALISTA]: 'Especialista',
 }
 
-watch(menu, (isOpen) => {
-  if (isOpen && !data.value && !error.value) {
-    fetchCandidate()
+const data = computed<Candidate | null>(() => {
+  if (!props.candidateData) return null
+
+  // Extrair competências dos relationshipsCandidato (se disponível)
+  const competencias = props.candidateData.relationshipsCandidato
+    ? props.candidateData.relationshipsCandidato
+        .filter((rel: LambdaRelationship) => rel.type === 'HABIL_EM')
+        .map((rel: LambdaRelationship) => (rel.target as LambdaCompetencia).nome)
+    : []
+
+  return {
+    nome: props.candidateData.nome,
+    senioridade: seniorityDisplayMap[props.candidateData.senioridade] || props.candidateData.senioridade,
+    cidade: props.candidateData.cidade,
+    avatar: null,
+    competencias,
   }
 })
+
+const loading = ref(false)
+const error = computed(() => !props.candidateData && props.candidateId !== undefined)
 </script>
 
 <style scoped>

@@ -83,8 +83,8 @@ import { ref, computed, onMounted } from 'vue'
 import ToolbarComponent from './ToolbarComponent.vue'
 import VacancyComponent from './VacancyComponent.vue'
 import { apiService } from '@/services/api'
-import { vacancyToCard, type VacancyCard } from '@/types/vacancy.types'
-import type { Vaga } from '@/types/api.types'
+import { lambdaVagaToCard, type VacancyCard } from '@/types/vacancy.types'
+import type { LambdaFilters } from '@/types/lambda.types'
 
 interface FilterData {
   senioridade: string[]
@@ -137,56 +137,41 @@ const loadVacancies = async (filterData: FilterData = { senioridade: [], modalid
   error.value = null
 
   try {
-    const apiFilters: {
-      senioridade?: string[]
-      modalidade?: string[]
-      cargo?: string[]
-      empresa?: string
-      cidade?: string
-    } = {}
+    const lambdaFilters: LambdaFilters = {}
 
     if (filterData.senioridade.length > 0) {
-      apiFilters.senioridade = filterData.senioridade
+      lambdaFilters.senioridade = filterData.senioridade
     }
 
     if (filterData.modalidade.length > 0) {
-      apiFilters.modalidade = filterData.modalidade
+      lambdaFilters.modalidade = filterData.modalidade
     }
 
-    // Cargo é enviado como array se existir
     if (filterData.cargo) {
-      apiFilters.cargo = [filterData.cargo]
+      lambdaFilters.cargo = [filterData.cargo]
     }
 
     if (filterData.empresa) {
-      apiFilters.empresa = filterData.empresa
+      lambdaFilters.empresa = [filterData.empresa]
     }
 
     if (filterData.cidade) {
-      apiFilters.cidade = filterData.cidade
+      lambdaFilters.cidade = [filterData.cidade]
     }
 
-    const hasFilters = Object.keys(apiFilters).length > 0
-    
-    // Buscar vagas e candidatos em paralelo (2 requisições apenas)
-    const [vagas, candidatos] = await Promise.all([
-      hasFilters ? apiService.getVagasWithFilters(apiFilters) : apiService.getVagas(),
-      apiService.getCandidatos()
-    ])
+    const hasFilters = Object.keys(lambdaFilters).length > 0
 
-    // Criar mapa de candidatos para busca rápida O(1)
-    const candidatosMap = new Map(candidatos.map(c => [c.id, c]))
+    // Requisição única para Lambda AWS
+    const response = await apiService.getCareerMatcherData(hasFilters ? lambdaFilters : undefined)
 
-    // Mapear vagas com seus candidatos
-    vacancies.value = vagas.map((vacancy: Vaga) => 
-      vacancyToCard(vacancy, vacancy.idCandidatoEscolhido ? candidatosMap.get(vacancy.idCandidatoEscolhido) : undefined)
-    )
+    // Mapear vagas da Lambda para VacancyCard
+    vacancies.value = response.vagas.map(lambdaVagaToCard)
   } catch (err) {
     console.error('Erro ao carregar vagas:', err)
     error.value =
       err instanceof Error
         ? err.message
-        : 'Não foi possível carregar as vagas. Verifique se o backend está rodando em http://localhost:8081'
+        : 'Não foi possível carregar as vagas. Verifique a conexão com a API.'
   } finally {
     loading.value = false
   }

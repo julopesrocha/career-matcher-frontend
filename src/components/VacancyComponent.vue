@@ -75,14 +75,17 @@
         <UserComponent
           :candidate-name="props.vacancy.candidato"
           :candidate-id="props.vacancy.candidatoId"
+          :candidate-data="{
+            ...props.vacancy.fullData.properties.candidatoEscolhido,
+            relationshipsCandidato: props.vacancy.fullData.properties.relationshipsCandidato
+          }"
         />
       </v-card-text>
     </v-card>
 
     <VacancyDetailsDialog
       v-model="showDialog"
-      :vacancy-id="props.vacancy.id"
-      :vacancy="{ cargo: props.vacancy.cargo }"
+      :vacancy-data="props.vacancy.fullData"
     />
   </div>
 </template>

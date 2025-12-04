@@ -4,7 +4,7 @@
       <div class="dialog-header">
         <v-card-title class="dialog-title">
           <v-icon class="mr-2">mdi-briefcase</v-icon>
-          {{ vacancy.cargo }}
+          {{ vacancyData.properties.cargo }}
         </v-card-title>
         <v-btn icon variant="text" @click="closeDialog" class="close-btn">
           <v-icon color="white">mdi-close</v-icon>
@@ -12,20 +12,7 @@
       </div>
 
       <v-card-text class="dialog-content pa-6">
-        <div v-if="loading" class="text-center py-8">
-          <v-progress-circular indeterminate color="deep-purple" size="48"></v-progress-circular>
-          <p class="mt-4 text-grey-darken-1">Carregando detalhes...</p>
-        </div>
-
-        <div v-else-if="error" class="text-center py-8">
-          <v-icon size="48" color="error">mdi-alert-circle</v-icon>
-          <p class="mt-4 text-error">{{ error }}</p>
-          <v-btn color="deep-purple" variant="elevated" class="mt-4" @click="loadVacancyDetails">
-            Tentar Novamente
-          </v-btn>
-        </div>
-
-        <div v-else-if="vacancyDetails">
+        <div v-if="vacancyDetails">
           <div class="info-section">
             <div class="section-title">
               <v-icon size="small" class="mr-2">mdi-domain</v-icon>
@@ -254,17 +241,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import { apiService } from '@/services/api'
-import type { Vaga, Candidato } from '@/types/api.types'
+import { ref, watch, computed } from 'vue'
+import type { LambdaVaga, LambdaCompetencia, LambdaRelationship, LambdaExperiencia, LambdaGraduacao, LambdaPosGraduacao } from '@/types/lambda.types'
 import { Senioridade, Modalidade } from '@/types/api.types'
 
 const props = defineProps<{
   modelValue: boolean
-  vacancyId: number
-  vacancy: {
-    cargo: string
-  }
+  vacancyData: LambdaVaga
 }>()
 
 const emit = defineEmits<{
@@ -272,10 +255,48 @@ const emit = defineEmits<{
 }>()
 
 const isOpen = ref(props.modelValue)
-const loading = ref(false)
-const error = ref<string | null>(null)
-const vacancyDetails = ref<Vaga | null>(null)
-const matchedCandidate = ref<Candidato | null>(null)
+
+// Extrair dados da Lambda
+const vacancyDetails = computed(() => {
+  if (!props.vacancyData) return null
+  return {
+    empresa: props.vacancyData.properties.empresa,
+    cargo: props.vacancyData.properties.cargo,
+    cidade: props.vacancyData.properties.cidade,
+    senioridade: props.vacancyData.properties.senioridade,
+    modalidade: props.vacancyData.properties.modalidade,
+    competencias: props.vacancyData.properties.relationshipsVaga
+      .filter((rel: LambdaRelationship) => rel.type === 'REQUISITA_COMPETENCIA_EM')
+      .map((rel: LambdaRelationship) => ({
+        competencia: { nome: (rel.target as LambdaCompetencia).nome },
+        peso: rel.peso || 0,
+        id: Math.random()
+      })),
+    graduacao: props.vacancyData.properties.relationshipsVaga
+      .filter((rel: LambdaRelationship) => rel.type === 'REQUISITA_GRADUACAO_EM')
+      .map((rel: LambdaRelationship) => ({
+        ...(rel.target as LambdaGraduacao),
+        id: Math.random()
+      })),
+    experiencia: props.vacancyData.properties.relationshipsVaga
+      .filter((rel: LambdaRelationship) => rel.type === 'REQUISITA_EXPERIENCIA_EM')
+      .map((rel: LambdaRelationship) => rel.target as LambdaExperiencia)[0] || null,
+    mestrado: props.vacancyData.properties.relationshipsVaga
+      .filter((rel: LambdaRelationship) => rel.type === 'REQUISITA_MESTRADO_EM')
+      .map((rel: LambdaRelationship) => rel.target as LambdaPosGraduacao)[0] || null,
+    doutorado: props.vacancyData.properties.relationshipsVaga
+      .filter((rel: LambdaRelationship) => rel.type === 'REQUISITA_DOUTORADO_EM')
+      .map((rel: LambdaRelationship) => rel.target as LambdaPosGraduacao)[0] || null,
+    posDoutorado: props.vacancyData.properties.relationshipsVaga
+      .filter((rel: LambdaRelationship) => rel.type === 'REQUISITA_POSDOUTORADO_EM')
+      .map((rel: LambdaRelationship) => rel.target as LambdaPosGraduacao)[0] || null,
+  }
+})
+
+const matchedCandidate = computed(() => {
+  if (!props.vacancyData?.properties?.candidatoEscolhido) return null
+  return props.vacancyData.properties.candidatoEscolhido
+})
 
 const seniorityDisplayMap: Record<Senioridade, string> = {
   [Senioridade.ESTAGIARIO]: 'Estagiário',
@@ -300,7 +321,8 @@ watch(
   (newVal) => {
     isOpen.value = newVal
     if (newVal) {
-      loadVacancyDetails()
+      console.log('Modal opened with data:', props.vacancyData)
+      console.log('Candidato:', props.vacancyData?.properties?.candidatoEscolhido)
     }
   }
 )
@@ -311,35 +333,6 @@ watch(isOpen, (newVal) => {
 
 const closeDialog = () => {
   isOpen.value = false
-}
-
-const loadVacancyDetails = async () => {
-  loading.value = true
-  error.value = null
-
-  try {
-    // Busca apenas a vaga específica por ID
-    const vacancy = await apiService.getVagaById(props.vacancyId)
-
-    vacancyDetails.value = vacancy
-
-    // Se a vaga tem um candidato escolhido, busca apenas esse candidato
-    if (vacancy.idCandidatoEscolhido) {
-      try {
-        const candidate = await apiService.getCandidatoById(vacancy.idCandidatoEscolhido)
-        matchedCandidate.value = candidate
-      } catch (err) {
-        console.error('Erro ao buscar candidato:', err)
-        // Não mostra erro se não conseguir buscar o candidato, apenas não exibe
-        matchedCandidate.value = null
-      }
-    }
-  } catch (err) {
-    console.error('Erro ao carregar detalhes da vaga:', err)
-    error.value = 'Não foi possível carregar os detalhes da vaga'
-  } finally {
-    loading.value = false
-  }
 }
 </script>
 
