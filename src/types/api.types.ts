@@ -51,7 +51,7 @@ export type PosDoutorado = PosGraduacao
 export interface Experiencia {
   id: number
   cargo: string
-  duracao_meses: number
+  duração_meses: number
   senioridade: Senioridade
 }
 

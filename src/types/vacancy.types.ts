@@ -1,5 +1,5 @@
 import { Senioridade, Modalidade } from './api.types'
-import type { Vaga, Candidato } from './api.types'
+import type { Vaga } from './api.types'
 
 export interface VacancyCard {
   id: number
@@ -9,8 +9,8 @@ export interface VacancyCard {
   senioridade: string
   modalidade: string
   competencias: string[]
-  candidato?: string
   candidatoId?: number
+  candidatoNome?: string
 }
 
 export interface VacancyFilters {
@@ -39,7 +39,7 @@ const modalityDisplayMap: Record<Modalidade, string> = {
   [Modalidade.HIBRIDO]: 'Híbrido',
 }
 
-export function vacancyToCard(vacancy: Vaga, candidate?: Candidato): VacancyCard {
+export function vacancyToCard(vacancy: Vaga): VacancyCard {
   return {
     id: vacancy.id,
     empresa: vacancy.empresa,
@@ -48,7 +48,7 @@ export function vacancyToCard(vacancy: Vaga, candidate?: Candidato): VacancyCard
     senioridade: seniorityDisplayMap[vacancy.senioridade] || vacancy.senioridade,
     modalidade: modalityDisplayMap[vacancy.modalidade] || vacancy.modalidade,
     competencias: vacancy.competencias.map((c) => c.competencia.nome),
-    candidato: candidate?.nome,
-    candidatoId: candidate?.id,
+    candidatoId: vacancy.idCandidatoEscolhido,
+    candidatoNome: (vacancy as any).nomeCandidatoEscolhido,
   }
 }
