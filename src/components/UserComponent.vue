@@ -8,11 +8,8 @@
           variant="flat"
           class="candidate-chip"
           size="small"
+          prepend-icon="mdi-account"
         >
-          <v-avatar start size="28">
-            <v-img v-if="data?.avatar" :src="data.avatar" cover />
-            <v-icon v-else size="20" color="white">mdi-account</v-icon>
-          </v-avatar>
           <span class="candidate-name">{{ data?.nome || candidateName || 'Sem candidato' }}</span>
         </v-chip>
       </template>
@@ -93,12 +90,10 @@ interface Candidate {
   competencias: string[]
 }
 
-// ---------------- STATE
 const data = ref<Candidate | null>(null)
 const loading = ref(false)
 const error = ref(false)
 
-// ---------------- FETCH REAL
 const fetchCandidate = async () => {
   if (!props.candidateId) {
     error.value = true
@@ -111,12 +106,11 @@ const fetchCandidate = async () => {
   try {
     const candidate: Candidato = await apiService.getCandidatoById(props.candidateId)
 
-    // Mapear os dados da API para o formato esperado pelo componente
     data.value = {
       nome: candidate.nome,
       senioridade: candidate.senioridade,
       cidade: candidate.cidade,
-      avatar: null, // Por enquanto sem avatar, você pode adicionar depois
+      avatar: null,
       competencias: candidate.competencias.map((c) => c.competencia.nome),
     }
   } catch (e) {
@@ -127,7 +121,6 @@ const fetchCandidate = async () => {
   }
 }
 
-// Buscar quando o menu abrir
 watch(menu, (isOpen) => {
   if (isOpen && !data.value && !error.value) {
     fetchCandidate()

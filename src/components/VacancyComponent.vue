@@ -73,7 +73,7 @@
           Melhor Candidato
         </div>
         <UserComponent
-          :candidate-name="props.vacancy.candidato"
+          :candidate-name="props.vacancy.candidatoNome"
           :candidate-id="props.vacancy.candidatoId"
         />
       </v-card-text>
