@@ -3,7 +3,7 @@
     <div class="hero-content">
       <v-icon size="48" class="hero-icon mb-2">mdi-briefcase-search</v-icon>
       <h1 class="app-title">Career Matcher</h1>
-      <p class="app-subtitle">Encontre a vaga perfeita para você</p>
+      <p class="app-subtitle">Encontre o candidato perfeito para sua vaga!</p>
     </div>
 
     <div class="search-wrapper">
@@ -15,12 +15,20 @@
 <script setup lang="ts">
 import SearchComponent from './SearchComponent.vue'
 
+interface FilterData {
+  senioridade: string[]
+  modalidade: string[]
+  cargo?: string
+  empresa?: string
+  cidade?: string
+}
+
 const emit = defineEmits<{
-  (e: 'filter-change', filters: string[]): void
+  (e: 'filter-change', filterData: FilterData): void
 }>()
 
-const handleFilterChange = (filters: string[]) => {
-  emit('filter-change', filters)
+const handleFilterChange = (filterData: FilterData) => {
+  emit('filter-change', filterData)
 }
 </script>
 
